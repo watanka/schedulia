@@ -17,12 +17,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2  # 서울 리전
 
+      - name: Debug SSH connection
+        run: |
+              ssh -v -i ~/.ssh/id_rsa ec2-user@${{ secrets.EC2_HOST }}
+  
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
-
+    
+          
+      
+    
       - name: Deploy to EC2
         run: |
           # 코드 전송
