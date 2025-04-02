@@ -50,6 +50,7 @@ services:
       - "3000:3000"
     command: npm run dev
     environment:
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://13.125.134.57/}
       - NEXT_PUBLIC_API_URL=http://backend:8000
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}

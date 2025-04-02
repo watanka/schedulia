@@ -21,6 +21,7 @@ var/
 
 # Environment variables
 .env
+.env.local
 
 # Docker
 postgres_data/
