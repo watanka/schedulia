@@ -43,4 +43,4 @@ jobs:
           EOL"
           
           # 배포 실행
-          ssh ec2-user@${{ secrets.EC2_HOST }} "cd /home/ec2-user/scheduler-server && docker-compose down && docker-compose up --build -d"
+          ssh ec2-user@${{ secrets.EC2_HOST }} "cd /home/ec2-user/schedulia && docker-compose down && docker-compose up --build -d"
