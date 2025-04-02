@@ -1,0 +1,37 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@auth/core": "^0.34.2",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@types/next-auth": "^3.13.0",
+    "axios": "^1.8.4",
+    "next": "15.2.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/react": "^6.1.15",
+    "@fullcalendar/timegrid": "^6.1.15",
+    "@tailwindcss/postcss": "^4",
+    "@types/fullcalendar": "^3.8.0",
+    "@types/node": "^20.17.28",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.4",
+    "next-auth": "^4.24.11",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
