@@ -23,18 +23,10 @@ jobs:
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
-          if_key_exists: replace  # 기존 키가 있으면 덮어쓰기
-          config: |               # SSH 구성 추가
-            Host ${{ secrets.EC2_HOST }}
-              IdentityFile ~/.ssh/id_rsa
-              StrictHostKeyChecking yes
-    
-      - name: Debug SSH connection
-        run: |
-              ssh -v -i ~/.ssh/id_rsa ec2-user@${{ secrets.EC2_HOST }}
-  
-      
-    
+
+      - name: Test SSH connection
+        run: ssh -o StrictHostKeyChecking=yes ec2-user@${{ secrets.EC2_HOST }} "echo SSH connection successful"
+
       - name: Deploy to EC2
         run: |
           # 코드 전송
