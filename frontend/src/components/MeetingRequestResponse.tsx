@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { respondToMeetingRequest, MeetingRequest } from '@/lib/api';
+import { respondToMeetingRequest, MeetingRequest } from '@/actions/meetings';
 
 interface MeetingRequestResponseProps {
   request: MeetingRequest;
@@ -35,6 +35,7 @@ export default function MeetingRequestResponse({ request, onResponse }: MeetingR
         time => time.start_time === selectedTime
       );
 
+      // 서버 액션 사용
       await respondToMeetingRequest(request.request_id, {
         accept,
         selected_time: accept ? selectedTimeObj : undefined,

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
-import { getMeetingRequests, MeetingRequest } from '@/lib/api';
+import { getMeetingRequests, MeetingRequest } from '@/actions/meetings';
 import MeetingRequestResponse from './MeetingRequestResponse';
 
 export default function MeetingList() {

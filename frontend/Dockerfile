@@ -9,9 +9,6 @@ RUN npm install --legacy-peer-deps
 # 소스 코드 복사
 COPY . .
 
-# 환경 변수 설정
-ENV NEXTAUTH_URL=http://localhost:3000
-
 # 빌드
 RUN npm run build
 

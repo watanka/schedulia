@@ -26,14 +26,13 @@ jobs:
       - name: Deploy to EC2
         run: |
           # 코드 전송
-          rsync -avz --exclude='.git/' --exclude='node_modules/' ./ ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/meeting-mcp/
+          rsync -avz --exclude='.git/' --exclude='node_modules/' ./ ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/schedulia/
           
           # .env 파일 생성
-          ssh ec2-user@${{ secrets.EC2_HOST }} "cat > /home/ec2-user/meeting-mcp/.env << 'EOL'
+          ssh ec2-user@${{ secrets.EC2_HOST }} "cat > /home/ec2-user/schedulia/.env << 'EOL'
           GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
           GMAIL_USERNAME=${{ secrets.GMAIL_USERNAME }}
           GMAIL_APP_PASSWORD=${{ secrets.GMAIL_APP_PASSWORD }}
           DB_USER=${{ secrets.DB_USER }}
@@ -44,4 +43,4 @@ jobs:
           EOL"
           
           # 배포 실행
-          ssh ec2-user@${{ secrets.EC2_HOST }} "cd /home/ec2-user/meeting-mcp && docker-compose down && docker-compose up --build -d"
+          ssh ec2-user@${{ secrets.EC2_HOST }} "cd /home/ec2-user/scheduler-server && docker-compose down && docker-compose up --build -d"

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { requestMeeting } from '@/lib/api';
+import { createMeetingRequest } from '@/actions/meetings';
 
 interface CreateMeetingFormProps {
   onSuccess?: () => void;
@@ -37,7 +37,8 @@ export default function CreateMeetingForm({ onSuccess }: CreateMeetingFormProps)
       const startDateTime = new Date(`${formData.date}T${formData.start_time}`);
       const endDateTime = new Date(`${formData.date}T${formData.end_time}`);
 
-      await requestMeeting({
+      // 서버 액션 사용
+      await createMeetingRequest({
         receiver_email: formData.receiver_email,
         title: formData.title,
         description: formData.description,

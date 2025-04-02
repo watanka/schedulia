@@ -1,64 +1,70 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import koLocale from '@fullcalendar/core/locales/ko';
 import { EventClickArg } from '@fullcalendar/core';
-
-interface Meeting {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  attendees: string[];
-}
+import { getSchedules, Schedule } from '@/actions/meetings';
 
 export default function Calendar() {
-  const [meetings, setMeetings] = React.useState<Meeting[]>([]);
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  React.useEffect(() => {
-    // TODO: API 연동
-    // 임시 데이터
-    setMeetings([
-      {
-        id: 1,
-        title: '팀 주간 회의',
-        description: '이번 주 진행 상황 공유',
-        date: '2024-04-01T10:00:00',
-        attendees: ['user1@example.com', 'user2@example.com']
-      },
-      {
-        id: 2,
-        title: '프로젝트 리뷰',
-        description: '프로젝트 진행 상황 검토',
-        date: '2024-04-02T14:00:00',
-        attendees: ['user1@example.com', 'user3@example.com']
+  useEffect(() => {
+    async function fetchSchedules() {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getSchedules();
+        setSchedules(data);
+      } catch (err) {
+        console.error('일정 불러오기 실패:', err);
+        setError('일정을 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
       }
-    ]);
+    }
+
+    fetchSchedules();
   }, []);
 
-  const events = meetings.map(meeting => ({
-    id: meeting.id.toString(),
-    title: meeting.title,
-    start: meeting.date,
+  const events = schedules.map(schedule => ({
+    id: schedule.id.toString(),
+    title: schedule.title,
+    start: schedule.time.start_time,
+    end: schedule.time.end_time,
     extendedProps: {
-      description: meeting.description,
-      attendees: meeting.attendees
+      description: schedule.description || '',
+      host: schedule.host.name,
+      hostEmail: schedule.host.email,
+      participants: schedule.participants?.map(p => p.email) || []
     }
   }));
 
   const handleEventClick = (arg: EventClickArg) => {
     const event = arg.event;
+    const props = event.extendedProps;
+    
     alert(`
       ${event.title}
-      시간: ${new Date(event.start!).toLocaleString('ko-KR')}
-      설명: ${event.extendedProps.description}
-      참석자: ${event.extendedProps.attendees.join(', ')}
+      시간: ${new Date(event.start!).toLocaleString('ko-KR')} ~ ${new Date(event.end!).toLocaleString('ko-KR')}
+      설명: ${props.description}
+      주최자: ${props.host} (${props.hostEmail})
+      참석자: ${props.participants.join(', ')}
     `);
   };
+
+  if (loading) {
+    return <div className="h-[600px] flex items-center justify-center">로딩 중...</div>;
+  }
+
+  if (error) {
+    return <div className="h-[600px] flex items-center justify-center text-red-500">{error}</div>;
+  }
 
   return (
     <div className="h-[600px]">
