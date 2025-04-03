@@ -6,6 +6,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
+ENV PATH="/app/node_modules/.bin:$PATH"
+
 # 소스 코드 복사
 COPY . .
 

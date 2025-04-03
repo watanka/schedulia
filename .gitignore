@@ -29,3 +29,5 @@ postgres_data/
 # IDE
 .vscode/
 .idea/
+
+nginx/
