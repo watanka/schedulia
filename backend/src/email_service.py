@@ -8,9 +8,9 @@ import os
 class EmailService:
     def __init__(self):
         self.conf = ConnectionConfig(
-            MAIL_USERNAME = os.getenv("GMAIL_USERNAME", "noreply@schedulia.org"),  # Gmail 주소
-            MAIL_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "kprjxjpojwnjdehr"),  # Gmail 앱 비밀번호
-            MAIL_FROM = os.getenv("GMAIL_USERNAME", "noreply@schedulia.org"),  # Gmail 주소와 동일하게
+            MAIL_USERNAME = os.getenv("GMAIL_USERNAME"),  # Gmail 주소
+            MAIL_PASSWORD = os.getenv("GMAIL_APP_PASSWORD"),  # Gmail 앱 비밀번호
+            MAIL_FROM = os.getenv("GMAIL_USERNAME"),  # Gmail 주소와 동일하게
             MAIL_PORT = 587,
             MAIL_SERVER = "smtp.gmail.com",
             MAIL_FROM_NAME = "Schedulia",
