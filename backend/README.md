@@ -1,21 +1,8 @@
 
-[Schedule Server]: 사용자의 스케쥴 정보를 저장해놓는 서버
+## Schedulia
+schedulia is 
 
-데이터 스키마
-
-Time
-- start_time
-- end_time
-
-MeetingSchedule
-- host: User
-- participants: List[User]
-- Time
-
-
-MeetingRequest
-- request_id: int
-- sender: User
-- receiver: User
-- available_times: List[Time]
-- status: [PENDING, DECLINED, ACCEPTED]
+### TODO
+25/04/03 서버 배포 완료
+CI/CD 손봐야함
+비회원 초대 링크에 대한 로직 구현 필요

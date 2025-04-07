@@ -41,7 +41,7 @@ Suggested time:
 {self._format_available_times(meeting_request.available_times)}
 
 To respond to the meeting request, please sign up through the following link:
-http://schedulia.org/signup 
+http://schedulia.org
 
 Thank you.
 Schedulia Team
