@@ -273,73 +273,18 @@ async def respond_to_meeting_request(
     
     return meeting_request
 
+@app.post("/meetings/{meeting_id}/confirm", response_model = MeetingSchedule)
+async def confirm_meeting(meeting_id: int, current_user: User = Depends(get_current_user)):
+
+    # 현재 사용자가 호스트인지 확인
+    # 참석자들이 전부 응답했는지 확인
+    
+
+
 @app.get("/health-check")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
-# MCP 엔드포인트
-@app.post("/mcp/requests/", response_model=MeetingRequest)
-async def mcp_request_meeting(
-    request: CreateMeetingRequest,
-    background_tasks: BackgroundTasks,
-    current_user: User = Depends(get_current_user)
-):
-    """MCP를 통한 미팅 요청 생성"""
-    meeting_request = MeetingRequest(
-        request_id=0,  # DB에서 자동 설정
-        sender=current_user,
-        receiver_email=request.receiver_email,
-        available_times=request.available_times,
-        title=request.title,
-        description=request.description
-    )
-
-    created_request = db.create_request(meeting_request)
-    await email_service.send_meeting_request_email(created_request, background_tasks)
-    
-    return created_request
-
-@app.get("/mcp/schedules/")
-async def mcp_view_schedules(
-    date: str = None,
-    current_user: User = Depends(get_current_user)
-):
-    """MCP를 통한 스케줄 조회"""
-    if date:
-        return db.get_schedules_by_date(current_user, date)
-    return db.get_all_schedules(current_user)
-
-@app.get("/mcp/requests/")
-async def mcp_view_requests(
-    current_user: User = Depends(get_current_user)
-):
-    """MCP를 통한 미팅 요청 목록 조회"""
-    return db.get_requests(current_user)
-
-@app.post("/mcp/requests/{request_id}/respond")
-async def mcp_respond_to_request(
-    request_id: int,
-    response: MeetingResponse,
-    background_tasks: BackgroundTasks,
-    current_user: User = Depends(get_current_user)
-):
-    """MCP를 통한 미팅 요청 응답"""
-    meeting_request = db.get_request(request_id)
-    if not meeting_request:
-        raise HTTPException(status_code=404, detail="Meeting request not found")
-        
-    if meeting_request.receiver_email != current_user.email:
-        raise HTTPException(status_code=403, detail="Not authorized to respond to this request")
-        
-    updated_request = db.update_request_status(
-        request_id,
-        RequestStatus.ACCEPTED if response.accept else RequestStatus.REJECTED,
-        response.selected_time if response.accept else None
-    )
-    
-    await email_service.send_meeting_response_email(updated_request, background_tasks)
-    
-    return updated_request
 
 if __name__ == "__main__":
     import uvicorn
