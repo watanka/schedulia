@@ -14,7 +14,7 @@ from src.models import User, APIKey, Time, MeetingSchedule, MeetingRequest
 class PostgresDatabase(DatabaseInterface):
     def __init__(self, connection_string: str):
         self.engine = create_engine(connection_string)
-        self.Session = sessionmaker(bind=self.engine)
+        self.Session = sessionmaker(bind=self.engine) # TODO: uow 적용
         Base.metadata.create_all(self.engine)
     
     def _convert_user_model(self, user_model: UserModel) -> User:
@@ -80,6 +80,8 @@ class PostgresDatabase(DatabaseInterface):
                 participant_model = session.query(UserModel).get(participant.id)
                 if participant_model:
                     schedule_model.participants.append(participant_model)
+
+                # TODO: 만약 가입되지 않은 유저라면, 이메일만 보낸다. DB layer에서 할 일은 아님.
             
             session.add(schedule_model)
             session.commit()
@@ -157,7 +159,7 @@ class PostgresDatabase(DatabaseInterface):
                 selected_time=self._convert_time_model(request_model.selected_time) if request_model.selected_time else None
             )
     
-    def get_request(self, request_id: int) -> Optional[MeetingRequest]:
+    def get_meeting_request(self, request_id: int) -> Optional[MeetingRequest]:
         with self.Session() as session:
             request_model = session.query(MeetingRequestModel).get(request_id)
             if not request_model:
@@ -179,19 +181,9 @@ class PostgresDatabase(DatabaseInterface):
             request_models = session.query(MeetingRequestModel).filter(
                 MeetingRequestModel.receiver_email == user_email
             ).all()
+
+            return request_models
             
-            return [
-                MeetingRequest(
-                    request_id=rm.id,
-                    sender=self._convert_user_model(rm.sender),
-                    receiver_email=rm.receiver_email,
-                    available_times=[self._convert_time_model(t) for t in rm.available_times],
-                    status=rm.status,
-                    title=rm.title,
-                    description=rm.description,
-                    selected_time=self._convert_time_model(rm.selected_time) if rm.selected_time else None
-                ) for rm in request_models
-            ]
     
     def create_api_key(self, user_id: int) -> APIKey:
         with self.Session() as session:
@@ -248,6 +240,8 @@ class PostgresDatabase(DatabaseInterface):
             session.commit()
             return True
     
+    
+
     def update_request_status(self, request_id: int, status: str, selected_time: Optional[Time] = None) -> MeetingRequest:
         with self.Session() as session:
             request_model = session.query(MeetingRequestModel).get(request_id)

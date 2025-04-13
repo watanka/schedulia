@@ -195,9 +195,7 @@ async def view_meeting_schedules(
 @app.get("/requests/", response_model=List[MeetingRequest])
 async def view_meeting_requests(current_user: User = Depends(get_current_user)):
     try:
-        print(f"Viewing meeting requests for user: {current_user.email}")
         requests = db.get_user_received_requests(current_user.email)
-        print(f"Found {len(requests)} meeting requests")
         return requests
     except Exception as e:
         print(f"Error occurred while viewing meeting requests: {e}")
@@ -233,7 +231,7 @@ async def respond_to_meeting_request(
     response: RespondToMeetingRequest,
     current_user: User = Depends(get_current_user)
 ):
-    meeting_request: MeetingRequest = db.get_request(request_id)
+    meeting_request: MeetingRequest = db.get_meeting_request(request_id)
     if not meeting_request:
         raise HTTPException(status_code=404, detail="Request not found")
     
@@ -275,7 +273,7 @@ async def respond_to_meeting_request(
 
 @app.post("/meetings/{meeting_id}/confirm", response_model = MeetingSchedule)
 async def confirm_meeting(meeting_id: int, current_user: User = Depends(get_current_user)):
-
+    pass
     # 현재 사용자가 호스트인지 확인
     # 참석자들이 전부 응답했는지 확인
     

@@ -40,7 +40,7 @@ class DatabaseInterface(ABC):
         pass
     
     @abstractmethod
-    def get_request(self, request_id: int) -> Optional[MeetingRequest]:
+    def get_meeting_request(self, request_id: int) -> Optional[MeetingRequest]:
         """ID로 미팅 요청 조회"""
         pass
     

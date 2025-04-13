@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Table, JSON
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Table, JSON, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+from enum import Enum
 
 Base = declarative_base()
 
@@ -12,6 +13,11 @@ meeting_participants = Table(
     Column('meeting_id', Integer, ForeignKey('meeting_schedules.id')),
     Column('user_id', Integer, ForeignKey('users.id'))
 )
+
+class MeetingStatus(str, Enum):
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    CANCELLED = "CANCELLED"
 
 class UserModel(Base):
     __tablename__ = 'users'
@@ -40,7 +46,6 @@ class TimeModel(Base):
     start_time = Column(DateTime, nullable=False)
     end_time = Column(DateTime, nullable=False)
     meeting_request_id = Column(Integer, ForeignKey('meeting_requests.id'), nullable=True)
-    is_selected = Column(Boolean, default=False)  # 미팅 요청에서 선택된 시간인지 여부
     meeting_schedule = relationship("MeetingScheduleModel", back_populates="time", uselist=False)
     meeting_request = relationship("MeetingRequestModel", back_populates="available_times", foreign_keys=[meeting_request_id])
 
@@ -65,7 +70,7 @@ class MeetingRequestModel(Base):
     receiver_email = Column(String, nullable=False)
     title = Column(String, nullable=False)
     description = Column(String)
-    status = Column(String, default="PENDING")
+    status = Column(SQLEnum(MeetingStatus), default=MeetingStatus.PENDING)
     
     sender = relationship("UserModel", back_populates="sent_requests")
     available_times = relationship("TimeModel", back_populates="meeting_request", foreign_keys=[TimeModel.meeting_request_id])
