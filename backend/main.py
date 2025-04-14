@@ -15,7 +15,7 @@ from src.models import User, Time, MeetingSchedule, MeetingRequest, RequestStatu
 from src.email_service import email_service
 from src.db.factory import DatabaseFactory
 from config import DB_CONFIG
-
+from src.services.meeting_service import MeetingService
 
 # CORS 설정을 환경에 따라 다르게 적용
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
@@ -51,6 +51,8 @@ app.add_middleware(
 )
 
 db = DatabaseFactory.create_database(DB_CONFIG)
+
+meeting_service = MeetingService(db)
 
 JWT_SECRET = os.getenv('NEXTAUTH_SECRET', '')
 
@@ -195,7 +197,7 @@ async def view_meeting_schedules(
 @app.get("/requests/", response_model=List[MeetingRequest])
 async def view_meeting_requests(current_user: User = Depends(get_current_user)):
     try:
-        requests = db.get_user_received_requests(current_user.email)
+        requests = meeting_service.get_meeting_requests_by_user_id(current_user.id)
         return requests
     except Exception as e:
         print(f"Error occurred while viewing meeting requests: {e}")

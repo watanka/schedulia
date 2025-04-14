@@ -14,10 +14,11 @@ meeting_participants = Table(
     Column('user_id', Integer, ForeignKey('users.id'))
 )
 
-class MeetingStatus(str, Enum):
+class MeetingRequestStatus(str, Enum):
     PENDING = "PENDING"
+    ACCEPTED = "ACCEPTED"
+    DECLINED = "DECLINED"
     CONFIRMED = "CONFIRMED"
-    CANCELLED = "CANCELLED"
 
 class UserModel(Base):
     __tablename__ = 'users'
@@ -70,10 +71,19 @@ class MeetingRequestModel(Base):
     receiver_email = Column(String, nullable=False)
     title = Column(String, nullable=False)
     description = Column(String)
-    status = Column(SQLEnum(MeetingStatus), default=MeetingStatus.PENDING)
+    status = Column(SQLEnum(MeetingRequestStatus), default=MeetingRequestStatus.PENDING)
     
     sender = relationship("UserModel", back_populates="sent_requests")
     available_times = relationship("TimeModel", back_populates="meeting_request", foreign_keys=[TimeModel.meeting_request_id])
     selected_time_id = Column(Integer, ForeignKey('times.id'), nullable=True)
     selected_time = relationship("TimeModel", foreign_keys=[selected_time_id], overlaps="available_times")
+
+
+class MeetingParticipantModel(Base):
+    __tablename__ = 'meeting_participants'
+    
+    meeting_id = Column(Integer, ForeignKey('meeting_schedules.id'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    is_attending = Column(Boolean, default=False)
+    # selected_times = Column(Integer, ForeignKey('times.id'), nullable=True)
 
